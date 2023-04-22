@@ -1,7 +1,7 @@
-use std::convert::TryInto;
 use std::env;
 use std::error::Error;
 use zeromq::{Socket, SocketRecv};
+use zmq_serde::Data;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -20,14 +20,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     loop {
         let recv = socket.recv().await?;
-        let stock: String = String::from_utf8(recv.get(0).unwrap().to_vec())?;
-        let price: u32 = u32::from_ne_bytes(
-            recv.get(1)
-                .unwrap()
-                .to_vec()
-                .try_into()
-                .expect("Couldn't deserialze u32 from data"),
-        );
-        println!("{}: {}", stock, price);
+        let r = recv.get(0);
+        if r.is_none() {
+            continue;
+        }
+        if let Ok(d) = bincode::deserialize::<Data>(r.unwrap()) {
+            dbg!(d);
+        }
     }
 }
