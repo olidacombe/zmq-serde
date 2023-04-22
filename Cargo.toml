@@ -1,0 +1,18 @@
+[package]
+name = "zmq-serde"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rand = "0.8.5"
+tokio = "1.27.0"
+zeromq = "0.3.3"
+
+
+[[bin]]
+name = "daemon"
+path = "src/daemon/main.rs"
+
+[[bin]]
+name = "client"
+path = "src/client/main.rs"
